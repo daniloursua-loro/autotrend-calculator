@@ -263,12 +263,12 @@ select:focus,input:focus{
   </div>
 
   <!-- Mode toggle -->
-  <div class="mode-toggle">
-    <button class="mode-btn" id="modeCatalog" onclick="switchMode('catalog')">
+  <div class="mode-toggle" style="display:none">
+    <button class="mode-btn active" id="modeCatalog" onclick="switchMode('catalog')">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
       From Catalog
     </button>
-    <button class="mode-btn active" id="modeManual" onclick="switchMode('manual')">
+    <button class="mode-btn" id="modeManual" onclick="switchMode('manual')" style="display:none">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
       Quick Calculate
     </button>
@@ -295,7 +295,7 @@ select:focus,input:focus{
   </div>
 
   <!-- Step 1: Catalog Vehicle Selection -->
-  <div class="card hidden" id="step1">
+  <div class="card" id="step1">
     <div class="card-title">
       <span class="icon-wrap">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
@@ -329,7 +329,7 @@ select:focus,input:focus{
   </div>
 
   <!-- Step 1b: Manual Quick Calc -->
-  <div class="card" id="step1m">
+  <div class="card hidden" id="step1m">
     <div class="card-title">
       <span class="icon-wrap">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
@@ -439,6 +439,14 @@ select:focus,input:focus{
     <div class="breakdown" id="breakdown"></div>
     <div class="divider"></div>
 
+    <div class="cta-section" style="text-align:center;margin-top:16px;padding:16px;background:rgba(220,38,38,.04);border-radius:10px;border:1px solid rgba(220,38,38,.12);">
+      <p style="font-size:.82rem;color:var(--silver-600);margin-bottom:10px;line-height:1.5;">Have any questions? Feel free to talk to our sales team!</p>
+      <a href="https://m.me/autotrend" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;background:var(--grad-red);color:#fff;padding:10px 20px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:.83rem;font-weight:600;text-decoration:none;box-shadow:0 3px 12px rgba(220,38,38,.2);">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Talk to Agent
+      </a>
+    </div>
+
     <div class="disclaimer">
       <p>This quotation is for estimation purposes only and is subject to the final result of the Credit Investigation. All figures are based on the offer provided by the dealership. Autotrend Autoloan Services has no control over the total cashout amount. Only standard Planta discount applies.</p>
     </div>
@@ -477,7 +485,7 @@ const PF_DEFAULT = 2050;
 let currentStep = 1;
 let selectedOption = 1;
 let selectedTerm = null;
-let mode = 'manual'; // 'catalog' or 'manual'
+let mode = 'catalog'; // 'catalog' or 'manual'
 
 // Init brands
 function init(){
@@ -663,31 +671,8 @@ function updateOptionSummary(){
   const v = getSelected();
   if(!v) return;
   const el = document.getElementById('optionSummary');
-  const cashout = selectedOption===1 ? v.o1c : v.o2c;
   const label1 = selectedOption===1 ? 'Includes CMF in cashout' : 'CMF applied to monthly';
-  el.innerHTML = `
-    <div class="breakdown-row highlight">
-      <span class="lbl">Total Cashout</span>
-      <span class="val">${fmt(cashout)}</span>
-    </div>
-    <div class="breakdown-row">
-      <span class="lbl">20% Down Payment</span>
-      <span class="val">${fmt(v.dp)}</span>
-    </div>
-    <div class="breakdown-row">
-      <span class="lbl">Insurance (1yr)</span>
-      <span class="val">${fmt(v.ins)}</span>
-    </div>
-    <div class="breakdown-row">
-      <span class="lbl">Processing Fee</span>
-      <span class="val">${fmt(v.pf)}</span>
-    </div>
-    <div class="breakdown-row">
-      <span class="lbl">LTO / TPL</span>
-      <span class="val">${fmt(v.lto)}</span>
-    </div>
-    <div style="font-size:.66rem;color:var(--silver-400);margin-top:6px;text-align:center">${label1}</div>
-  `;
+  el.innerHTML = `<div style="font-size:.66rem;color:var(--silver-400);margin-top:6px;text-align:center">${label1}</div>`;
 }
 
 function selectTerm(t){
@@ -724,37 +709,9 @@ function showResult(){
       <span class="lbl">SRP</span>
       <span class="val">${fmt(v.s)}</span>
     </div>
-    <div class="breakdown-row">
-      <span class="lbl">Discount</span>
-      <span class="val">-${fmt(v.d)}</span>
-    </div>
-    <div class="breakdown-row">
-      <span class="lbl">80% Loan Amount</span>
-      <span class="val">${fmt(v.la)}</span>
-    </div>
     <div class="breakdown-row highlight">
       <span class="lbl">Total Cashout (${optLabel})</span>
       <span class="val">${fmt(cashout)}</span>
-    </div>
-    <div class="breakdown-row">
-      <span class="lbl">20% Down Payment</span>
-      <span class="val">${fmt(v.dp)}</span>
-    </div>
-    <div class="breakdown-row">
-      <span class="lbl">Insurance (1yr est.)</span>
-      <span class="val">${fmt(v.ins)}</span>
-    </div>
-    <div class="breakdown-row">
-      <span class="lbl">CMF</span>
-      <span class="val">${fmt(v.cmf)}</span>
-    </div>
-    <div class="breakdown-row">
-      <span class="lbl">Processing Fee</span>
-      <span class="val">${fmt(v.pf)}</span>
-    </div>
-    <div class="breakdown-row">
-      <span class="lbl">LTO / TPL (3yrs)</span>
-      <span class="val">${fmt(v.lto)}</span>
     </div>
   `;
 }
